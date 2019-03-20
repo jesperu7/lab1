@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Lab1</string>
+
+    <string-array name="friendList">
+        <item>Alice</item>
+        <item>Bob</item>
+        <item>Charlie</item>
+        <item>Dawn</item>
+        <item>Elvis</item>
+        <item>Frode</item>
+    </string-array>
+
+</resources>
