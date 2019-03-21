@@ -16,8 +16,9 @@ import android.widget.Toast;
 import android.widget.Button;
 
 public class TransferActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    public static final String RECIPIENT = "whoToSendTo";
-    public static final String AMOUNT = "pay";
+    public static final String RECIPIENT = "transferName";
+    public static final String AMOUNT = "amountTransfer";
+    public static final String NEWBALANCE = "transferBalance";
     private TextView errorMessage;
     private EditText inputAmount;
     private Button buttonPay;
@@ -91,14 +92,21 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
 
     public void makePayment() {
         EditText editText = findViewById(R.id.txt_amount);
-        String recipient = editText.getText().toString();
+        String amount = editText.getText().toString();
 
         Spinner spinner = findViewById(R.id.friendsNames);
-        String amount = spinner.getSelectedItem().toString();
+        String recipient = spinner.getSelectedItem().toString();
+        
+        int temp = balance - Integer.parseInt(amount);
+        String newBalance = Integer.toString(temp);
 
         Intent payIntent = new Intent(TransferActivity.this, MainActivity.class);
-        payIntent.putExtra(RECIPIENT, recipient);
-        payIntent.putExtra(AMOUNT, amount);
+        Bundle payBundle = new Bundle();
+
+        payBundle.putString(RECIPIENT, recipient);
+        payBundle.putString(AMOUNT, amount);
+        payBundle.putString(NEWBALANCE, newBalance);
+
         setResult(Activity.RESULT_OK, payIntent);
         finish();
     }
