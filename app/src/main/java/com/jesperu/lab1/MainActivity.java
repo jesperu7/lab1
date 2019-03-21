@@ -1,5 +1,6 @@
 package com.jesperu.lab1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +11,8 @@ import android.widget.TextView;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_NUMBER = "com.jesperu.lab1.EXTRA_NUMBER";
+    public static final int RESULT_CODE = 0;
+    public static final String BALANCE = "balance";
     private Button btn_transfer;
     private Button btn_transactions;
 
@@ -18,6 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Random rand = new Random();
+        int randNum = rand.nextInt(20)+91;
+        TextView myText = (TextView) findViewById(R.id.lbl_rand);
+        String myString = String.valueOf(randNum);
+        myText.setText(myString);
 
         btn_transfer = (Button) findViewById(R.id.btn_transfer);
         btn_transfer.setOnClickListener(new View.OnClickListener() {
@@ -35,21 +43,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Random rand = new Random();
-        int randNum = rand.nextInt(20)+91;
-        TextView myText = (TextView) findViewById(R.id.lbl_rand);
-        String myString = String.valueOf(randNum);
-        myText.setText(myString);
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == RESULT_CODE){
+            if (resultCode == Activity.RESULT_OK){
+
+            }
+        }
 
     }
 
     public void openTransferActivity() {
-        TextView textView = (TextView) findViewById(R.id.lbl_rand);
-        int number = Integer.parseInt(textView.getText().toString());
+        TextView textView = findViewById(R.id.lbl_rand);
+        String number = textView.getText().toString();
 
         Intent intent = new Intent(this, TransferActivity.class);
-        intent.putExtra(EXTRA_NUMBER, number);
-        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString(BALANCE, number);
+
+        intent.replaceExtras(bundle);
+        startActivityForResult(intent, RESULT_CODE);
     }
 
     public void openTransactionsActivity() {

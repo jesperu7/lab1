@@ -1,5 +1,6 @@
 package com.jesperu.lab1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,9 +16,12 @@ import android.widget.Toast;
 import android.widget.Button;
 
 public class TransferActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    public static final String RECIPIENT = "whoToSendTo";
+    public static final String AMOUNT = "pay";
     private TextView errorMessage;
     private EditText inputAmount;
     private Button buttonPay;
+    static int balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,7 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
         setContentView(R.layout.activity_transfer);
 
         Intent intentBalance = getIntent();
+        balance = Integer.parseInt(intentBalance.getStringExtra(MainActivity.BALANCE));
 
         Spinner spinner = findViewById(R.id.friendsNames);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.friendList, android.R.layout.simple_spinner_item);
@@ -35,6 +40,13 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
         errorMessage = findViewById(R.id.lbl_amount_check);
         inputAmount = findViewById(R.id.txt_amount);
         buttonPay = findViewById(R.id.btn_pay);
+        buttonPay.setEnabled(false);
+        buttonPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePayment();
+            }
+        });
 
         inputAmount.addTextChangedListener(amountWatcher);
     }
@@ -47,18 +59,28 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            int balance = getIntent().getIntExtra(MainActivity.EXTRA_NUMBER, 0);
-            TextView amount = (TextView) findViewById(R.id.txt_amount);
+
+
+            EditText amount = findViewById(R.id.txt_amount);
             String number = amount.getText().toString().trim();
             int num = Integer.parseInt(number);
-            if (number.isEmpty() && num < balance){
-                errorMessage.setVisibility(View.VISIBLE);
-            }
-            if (num == 0 && num < balance) {
-                errorMessage.setVisibility(View.VISIBLE);
+
+            if (!number.isEmpty()){
+                if (num == 0){
+                    errorMessage.setVisibility(View.VISIBLE);
+                    buttonPay.setEnabled(false);
+                } else if (num > balance) {
+                    errorMessage.setVisibility(View.VISIBLE);
+                    buttonPay.setEnabled(false);
+                } else {
+                    errorMessage.setVisibility(View.INVISIBLE);
+                    buttonPay.setEnabled(true);
+                }
+            } else {
+                errorMessage.setVisibility(View.INVISIBLE);
+                buttonPay.setEnabled(false);
             }
 
-            buttonPay.setEnabled(num > 0);
         }
 
         @Override
@@ -66,6 +88,20 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
 
         }
     };
+
+    public void makePayment() {
+        EditText editText = findViewById(R.id.txt_amount);
+        String recipient = editText.getText().toString();
+
+        Spinner spinner = findViewById(R.id.friendsNames);
+        String amount = spinner.getSelectedItem().toString();
+
+        Intent payIntent = new Intent(TransferActivity.this, MainActivity.class);
+        payIntent.putExtra(RECIPIENT, recipient);
+        payIntent.putExtra(AMOUNT, amount);
+        setResult(Activity.RESULT_OK, payIntent);
+        finish();
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
