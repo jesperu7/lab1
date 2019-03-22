@@ -8,13 +8,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     public static final int RESULT_CODE = 0;
-    public static final String BALANCE = "balance";
+    public static String BALANCE = "balance";
+    public static final String TRANTIME = "timeOfTransaction";
+    public static final String TRANRECIPIENT = "recipient";
+    public static final String UPDATEBALANCE = "newBalance";
+    public static final String TRANAMOUNT = "amountTransfered";
     private Button btn_transfer;
     private Button btn_transactions;
+
+    private ArrayList<String> timeOfTransfer;
+    private ArrayList<String> reciever;
+    private ArrayList<Integer> amountTransfered;
+    private ArrayList<Integer> currentBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         Random rand = new Random();
         int randNum = rand.nextInt(20)+91;
         TextView myText = (TextView) findViewById(R.id.lbl_rand);
-        String myString = String.valueOf(randNum);
-        myText.setText(myString);
+        BALANCE = String.valueOf(randNum);
+        myText.setText(BALANCE);
 
         btn_transfer = (Button) findViewById(R.id.btn_transfer);
         btn_transfer.setOnClickListener(new View.OnClickListener() {
@@ -43,16 +53,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == RESULT_CODE){
             if (resultCode == Activity.RESULT_OK){
-
-
+                Bundle bundle = data.getExtras();
+                String temp1 = bundle.get(TransferActivity.AMOUNT).toString();
+                String temp2 = bundle.get(TransferActivity.RECIPIENT).toString();
+                this.timeOfTransfer.add(String.valueOf(android.text.format.DateFormat.format("HH::mm::ss", new java.util.Date())));
+                this.reciever.add(temp2);
+                this.amountTransfered.add(Integer.parseInt(temp1));
+                int tempBal = (Integer.parseInt(BALANCE) - Integer.parseInt(temp1));
+                this.BALANCE = Integer.toString(tempBal);
+                this.currentBalance.add(Integer.parseInt(BALANCE));
 
 
 
@@ -77,5 +92,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TransactionsActivity.class);
         startActivity(intent);
     }
+
 
 }
