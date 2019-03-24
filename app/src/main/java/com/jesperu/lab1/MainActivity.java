@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 this.BALANCE = Integer.toString(tempBal);
                 this.currentBalance.add(Integer.parseInt(BALANCE));
 
-
-
+                TextView myBalance = findViewById(R.id.lbl_rand);
+                myBalance.setText(BALANCE);
             }
         }
 
@@ -90,7 +90,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void openTransactionsActivity() {
         Intent intent = new Intent(this, TransactionsActivity.class);
+        Bundle b = new Bundle();
+
+        intent.putStringArrayListExtra("time_array", timeOfTransfer);
+        intent.putStringArrayListExtra("recipient_array", reciever);
+        intent.putIntegerArrayListExtra("updated_balance", currentBalance);
+        intent.putIntegerArrayListExtra("amount_transfered", amountTransfered);
+        intent.putExtras(b);
         startActivity(intent);
+
     }
 
 
