@@ -106,7 +106,8 @@ public class TransferActivity extends AppCompatActivity implements AdapterView.O
         payBundle.putString(RECIPIENT, recipient);
         payBundle.putString(AMOUNT, amount);
         payBundle.putString(NEWBALANCE, newBalance);
-
+        
+        payIntent.putExtras(payBundle);
         setResult(Activity.RESULT_OK, payIntent);
         finish();
     }
